@@ -1,12 +1,27 @@
 
+
 import './index.css'
+import Layout from './layouts/Layout'
+import NotFoundPage from './pages/NotFoundPage'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+
+const routes = [
+  {
+    path: "/",
+    element: <Layout/>,
+    errorElement: <NotFoundPage/>,
+    children: []
+  }
+]
 
 function App() {
+
+  const router = createBrowserRouter(routes)
 
   
   return (
     <>
-      <h1 className='text-red-600'>Hi</h1>
+      <RouterProvider router={router} />
     </>
   )
 }
