@@ -1,10 +1,15 @@
+import { Outlet } from "react-router-dom"
+import NavBar from "../NavBar"
 
 
 const Layout = () => {
   return (
-    <h1 className='text-black'>
-      Its a Layout
-    </h1>
+    <>
+    <NavBar/>
+    <main>
+      <Outlet />
+    </main>
+    </>
   )
 }
 
