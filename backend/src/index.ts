@@ -52,39 +52,30 @@ app.get("/", (req: Request, res: Response) => {
   console.log("Root route accessed from host:", req.headers.host);
   res.send("Backend is running with TypeScript!");
 });
-
-app.post("/api/blogs/:name/like", async (req: Request, res: Response) => {
+app.patch("/api/blogs/:name/like", async (req: Request, res: Response) => {
   try {
     const name = req.params.name as string;
 
-    const blog = await collection.findOne({ name  });
+    const updated = await collection.findOneAndUpdate(
+      { name },
+      { $inc: { likes: 1 } }, // Atomically increment the likes count
+      { returnDocument: 'after' } // Return the updated document
+    );
 
-    if (!blog) {
+    if (!updated) {
       return res
         .status(404)
         .send(`Blog with name: ${name} not found`);
     }
 
-    const update = { $inc: { likes: 1 } };
-
-    // Update the blog in the database
-    const result = await collection.updateOne(
-      { name },
-      update,
-    );
-
-    // Fetch the updated blog to get the latest likes count
-    const updatedBlog = await collection.findOne({ name });
-
     res
       .status(200)
-      .send(`Blog with name: ${name} has ${updatedBlog!.likes} likes`);
+      .json(updated.likes); // Return the updated likes count directly
   } catch (err) {
     console.error("Error while increasing likes:", err);
     res.status(500).send("Internal Server Error");
   }
 });
-
 app.get("/api/blogs", async (req: Request, res: Response) => {
   try {
     res.status(200).json(docs);
