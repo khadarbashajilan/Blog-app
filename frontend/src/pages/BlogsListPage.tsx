@@ -1,26 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import BlogsList from '../BlogsList';
-import { getAll, type blogsT } from '../data/content';
+import BlogsList from "../components/BlogsList";
+import { useBlogContext } from "../context/blogContext";
+
 
 const BlogsListPage: React.FC = () => {
-  const [allblogs, setblogs] = useState<blogsT[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const {blogs, loading, error} = useBlogContext()
+  // useEffect(() => {
+  //   const fetchBlogs = async () => {
+  //     try {
+  //       const data = await getAll();
+  //       setblogs(data);
+  //     } catch (err) {
+  //       setError(err instanceof Error ? err.message : 'An unknown error occurred');
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const data = await getAll();
-        setblogs(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlogs();
-  }, []);
+    // fetchBlogs();
+  // }, []);
 
   if (loading) {
     return <div className="container mx-auto p-4">Loading blogs...</div>;
@@ -33,7 +30,7 @@ const BlogsListPage: React.FC = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Blogs</h1>
-      <BlogsList blogs={allblogs} />
+      <BlogsList blogs={blogs} />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import BlogsListPage from './pages/BlogsListPage'
 import BlogPage from './pages/BlogPage'
+import LoginPage from './pages/LoginPage'
 
 const routes = [
   {
@@ -22,6 +23,10 @@ const routes = [
       {
         path:"/blogs/:id",
         element: <BlogPage/>
+      },
+      {
+        path:'/login',
+        element:<LoginPage/>
       }
     ]
   }
