@@ -45,3 +45,8 @@ class ShowBlog(BlogBase):
 class Blog(BlogBase):
     id: int
     creator: UserBase
+
+class Login(BaseModel):
+    mail:str
+    password:str
+    # name:str

@@ -1,32 +1,47 @@
-# Import SQLAlchemy components for defining database columns and data types
-from sqlalchemy import Column, Integer, String, ForeignKey  # Import necessary SQLAlchemy components
-# Import the base class for declarative models from the database configuration
-from .database import Base  # Import the base class for declarative models
+from sqlalchemy import String, Integer, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import List
+from .database import Base
 
-from sqlalchemy.orm import relationship  # Import the relationship function for defining relationships between models
+class Blog(Base):
+    """
+    Represents a blog post entity.
+    Linked to a User via the 'user_id' foreign key.
+    """
+    __tablename__ = 'blogs'
 
-# Define a Blog model class that inherits from the declarative base
-class Blog(Base):  # Define the Blog model class
-    # Specify the table name in the database
-    __tablename__ = 'blogs'  # Set the table name to 'blogs'
-    # Define an integer column as the primary key with indexing for performance
-    id = Column(Integer, primary_key=True, index=True)  # Define the primary key column
-    # Define a string column for blog titles
-    title = Column(String)  # Define the title column
-    # Define a string column for blog content
-    body = Column(String)  # Define the body column
-
-    user_id = Column(Integer, ForeignKey('users.id'))  # Define the user_id column as a foreign key
-
-    creator = relationship("User", back_populates='blogs')  # Define the relationship with the User model
-
-class User(Base):  # Define the User model class
-    __tablename__ = 'users'  # Set the table name to 'users'
-
-    id = Column(Integer, primary_key=True, index=True)  # Define the primary key column
-    name = Column(String)  # Define the name column
-    mail = Column(String)  # Define the mail column
-    password = Column(String)  # Define the password column
-
-    blogs = relationship('Blog', back_populates='creator')  # Define the relationship with the Blog model
+    # Primary key for the blog post
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     
+    # Title and content of the post
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    body: Mapped[str] = mapped_column(String, nullable=False)
+
+    # Foreign Key: References the 'id' column in the 'users' table
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))
+
+    # Relationship: Links back to the User model
+    # back_populates ensures synchronization with User.blogs
+    creator: Mapped["User"] = relationship("User", back_populates="blogs")
+
+
+class User(Base):
+    """
+    Represents a user entity.
+    One user can have multiple blog posts (One-to-Many).
+    """
+    __tablename__ = 'users'
+    
+    # Primary key for the user
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    
+    # Basic user information
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    mail: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
+    
+    # Hashed password string
+    password: Mapped[str] = mapped_column(String, nullable=False)
+
+    # Relationship: Links to the Blog model
+    # Mapped[List["Blog"]] tells the type checker this is a collection of Blog objects
+    blogs: Mapped[List["Blog"]] = relationship("Blog", back_populates="creator")
