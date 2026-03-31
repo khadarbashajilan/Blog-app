@@ -44,4 +44,4 @@ class ShowBlog(BlogBase):
 
 class Blog(BlogBase):
     id: int
-    creator: ShowUser
+    creator: UserBase

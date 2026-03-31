@@ -18,3 +18,14 @@ Base = declarative_base()
 
 # Configure a session factory with transaction control settings and bind it to the database engine
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Create a database session generator function that handles session lifecycle
+def get_db():
+# Create a new database session instance
+    db = SessionLocal()
+    try:
+        # Yield the session to be used in the route handler
+        yield db
+    finally:
+        # Ensure the session is properly closed after use
+        db.close()
