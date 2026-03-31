@@ -1,52 +1,47 @@
-from pydantic import BaseModel # Import base validation class
-from typing import Optional, List    # Import for optional fields and forward references
+from pydantic import BaseModel, ConfigDict
+from typing import Optional, List
+
+# --- BASE MODELS (shared fields) ---
+
+class BlogBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    title: str
+    body: str
 
 
+class UserBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    name: str
+    mail: str
 
 
-class BlogBase(BaseModel): # Create a base to share fields
-    title: str # Required title
-    body: str # Required body
-    # user_id:int
-    # class Config: # Configuration for Pydantic
-    #     from_attributes = True # Crucial: Allows Pydantic to read SQLAlchemy objects
-    
+# --- REQUEST MODELS (inputs) ---
 
-class UpdatedBlog(BaseModel): # Used for PATCH requests
-    title: Optional[str] = None # Optional title
-    body: Optional[str] = None # Optional body
-    
-    
-class User(BaseModel):
-    name : str
-    mail : str
+class UserCreate(UserBase):
+    password: str
 
-    
-class Userdetails(BaseModel):
-    name : str
-    password :str
-    mail: str 
-    
-class ShowUser(BaseModel):
-    name:str
-    mail:str
-    blogs: List[BlogBase] 
 
-    class Config: # Configuration for Pydantic
-        from_attributes = True # Crucial: Allows Pydantic to read SQLAlchemy objects
+class BlogCreate(BlogBase):
+    pass
 
- 
+
+class UpdatedBlog(BaseModel):
+    title: Optional[str] = None
+    body: Optional[str] = None
+
+
+# --- RESPONSE MODELS (outputs) ---
+
+class ShowUser(UserBase):
+    id: int
+    blogs: List[BlogBase] = []
+
 
 class ShowBlog(BlogBase):
-    id:int
-    user_id:int
+    id: int
+    user_id: int
 
-class Blog(BaseModel): # Used for RESPONSES (contains the ID)
-    title:str
-    body:str
-    creator: User
 
-    class Config: # Configuration for Pydantic
-        from_attributes = True # Crucial: Allows Pydantic to read SQLAlchemy objects
-
- 
+class Blog(BlogBase):
+    id: int
+    creator: ShowUser

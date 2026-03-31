@@ -175,8 +175,8 @@ def update(id: int, req: schemas.UpdatedBlog, db: Session = Depends(get_db)): # 
     return db_blog # Return the object (FastAPI validates this against schemas.Blog)
 
 
-@app.post('/user', response_model=schemas.User)
-def register(req:schemas.Userdetails, db:Session = Depends(get_db)):
+@app.post('/user', response_model=schemas.ShowUser)
+def register(req:schemas.UserCreate, db:Session = Depends(get_db)):
     
     # validate the mail
     try:

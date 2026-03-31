@@ -1,6 +1,6 @@
 # Import SQLAlchemy components for database operations and ORM functionality
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Define the database URL for SQLite, creating a file named 'blog.db' in the current directory
