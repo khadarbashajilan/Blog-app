@@ -24,8 +24,8 @@ models.Base.metadata.create_all(engine)
 
 # Create
 # Define a POST endpoint to create a new blog post
-@app.post("/blog", status_code=status.HTTP_201_CREATED, response_model=schemas.Blog, tags=['blogs'])
-def create(req: schemas.Blog, db: Session = Depends(get_db)):
+@app.post("/blog", status_code=status.HTTP_201_CREATED, response_model=schemas.ShowBlog, tags=['blogs'])
+def create(req: schemas.BlogBase, db: Session = Depends(get_db)):
     """
     Create a new blog post.
 
@@ -37,7 +37,7 @@ def create(req: schemas.Blog, db: Session = Depends(get_db)):
         The created blog post
     """
     # Create a new Blog model instance with data from the request
-    new_blog = models.Blog(title=req.title, body=req.body)
+    new_blog = models.Blog(title=req.title, body=req.body, user_id = 2)
 
     try:
         # Add the new blog to the database session
@@ -152,15 +152,27 @@ def update(id: int, req: schemas.UpdatedBlog, db: Session = Depends(get_db)): # 
         raise HTTPException(status_code=404, detail="Blog not found") # Exit logic
 
     # Create a dictionary of only the fields actually provided in the request
-    update_data = req.model_dump(exclude_unset=True) # ignores None values
+    # update_data = req.model_dump(exclude_unset=True) # ignores None values
 
     # Update the database record efficiently
-    blog_query.update(update_data, synchronize_session=False) # Apply dictionary to the database
+    # blog_query.update(update_data, synchronize_session=False) # Apply dictionary to the database
+
+    
+    # or :    
+    # Create a dictionary to store the update data for the blog post
+    # Convert dictionary keys from strings to SQLAlchemy column objects
+    update_data = {
+    # Set the attribute of the Blog model corresponding to the key to the provided value
+    getattr(models.Blog, key): value
+    # Iterate over the key-value pairs in the request data, excluding unset fields
+    for key, value in req.model_dump(exclude_unset=True).items()
+    } 
+    blog_query.update(update_data, synchronize_session=False)  
+    # Update the database record with the modified dictionary    
 
     db.commit() # Save changes
     db.refresh(db_blog) # Reload object to include the id and updated fields
     return db_blog # Return the object (FastAPI validates this against schemas.Blog)
-
 
 
 @app.post('/user', response_model=schemas.User)
@@ -195,3 +207,19 @@ def register(req:schemas.Userdetails, db:Session = Depends(get_db)):
             detail=f"Database error: {str(e)}"
         )
     return new_user
+
+@app.get('/user/{id}', response_model=schemas.ShowUser)
+def show_users(id:int, db:Session = Depends(get_db)):
+    try:
+        user = db.query(models.User).filter(models.User.id == id).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User with id {id} not found"
+            )
+        return user
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database error: {str(e)}"
+        )

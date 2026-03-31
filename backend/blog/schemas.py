@@ -1,32 +1,52 @@
-from typing import Optional # Import for optional fields
 from pydantic import BaseModel # Import base validation class
+from typing import Optional, List    # Import for optional fields and forward references
+
+
 
 
 class BlogBase(BaseModel): # Create a base to share fields
     title: str # Required title
     body: str # Required body
-
-class BlogCreate(BlogBase): # Used for POST requests
-    pass # Uses title and body from base
-
-class Blog(BlogBase): # Used for RESPONSES (contains the ID)
-    id: int # The database ID must be defined here to avoid validation errors
-
-    class Config: # Configuration for Pydantic
-        from_attributes = True # Crucial: Allows Pydantic to read SQLAlchemy objects
+    # user_id:int
+    # class Config: # Configuration for Pydantic
+    #     from_attributes = True # Crucial: Allows Pydantic to read SQLAlchemy objects
+    
 
 class UpdatedBlog(BaseModel): # Used for PATCH requests
     title: Optional[str] = None # Optional title
     body: Optional[str] = None # Optional body
     
     
+class User(BaseModel):
+    name : str
+    mail : str
+
+    
 class Userdetails(BaseModel):
     name : str
     password :str
     mail: str 
+    
+class ShowUser(BaseModel):
+    name:str
+    mail:str
+    blogs: List[BlogBase] 
 
-class User(BaseModel):
-    name : str
-    mail : str
-    # class Config:
-    #     from_attributes = True
+    class Config: # Configuration for Pydantic
+        from_attributes = True # Crucial: Allows Pydantic to read SQLAlchemy objects
+
+ 
+
+class ShowBlog(BlogBase):
+    id:int
+    user_id:int
+
+class Blog(BaseModel): # Used for RESPONSES (contains the ID)
+    title:str
+    body:str
+    creator: User
+
+    class Config: # Configuration for Pydantic
+        from_attributes = True # Crucial: Allows Pydantic to read SQLAlchemy objects
+
+ 

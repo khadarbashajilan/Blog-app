@@ -18,7 +18,7 @@ class Blog(Base):  # Define the Blog model class
 
     user_id = Column(Integer, ForeignKey('users.id'))  # Define the user_id column as a foreign key
 
-    parent = relationship("User", back_populates='child')  # Define the relationship with the User model
+    creator = relationship("User", back_populates='blogs')  # Define the relationship with the User model
 
 class User(Base):  # Define the User model class
     __tablename__ = 'users'  # Set the table name to 'users'
@@ -28,5 +28,5 @@ class User(Base):  # Define the User model class
     mail = Column(String)  # Define the mail column
     password = Column(String)  # Define the password column
 
-    child = relationship('Blog', back_populates='parent')  # Define the relationship with the Blog model
+    blogs = relationship('Blog', back_populates='creator')  # Define the relationship with the Blog model
     
