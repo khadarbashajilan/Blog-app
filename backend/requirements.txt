@@ -2,6 +2,7 @@ fastapi
 uvicorn
 fastapi[standard]
 sqlalchemy
-bcrypt
 pytest
 httpx
+pyjwt
+pwdlib[argon2]

@@ -1,19 +1,18 @@
-import bcrypt  # Import the bcrypt library for password hashing
+from pwdlib import PasswordHash
 
 class Hash:
-    @staticmethod
-    def bcrypt(password: str):  # Method to hash a password using bcrypt
-        # Convert string to bytes, then hash
-        pwd_bytes = password.encode('utf-8')  # Convert the password string to bytes
-        salt = bcrypt.gensalt()  # Generate a random salt
-        hashed_password = bcrypt.hashpw(pwd_bytes, salt)  # Hash the password with the salt
-        return hashed_password.decode('utf-8')  # Return the hashed password as a string
+    # Initialize the handler once (using bcrypt as the backend)
+    # This automatically handles salting and complex configurations
+    _password_hash = PasswordHash.recommended()
 
     @staticmethod
-    def verify(hashed_password: str, plain_password: str):  # Method to verify a password against a hash
-        # Check if the plain password matches the hash
-        password_byte_enc = plain_password.encode('utf-8')  # Convert the plain password to bytes
-        hashed_byte_enc = hashed_password.encode('utf-8')  # Convert the hashed password to bytes
-        return bcrypt.checkpw(password_byte_enc, hashed_byte_enc)  # Check if the plain password matches the hash
-    
+    def bcrypt(password: str) -> str:
+        """Hash a password string and return the hash string."""
+        # pwdlib handles .encode() and .decode() internally
+        return Hash._password_hash.hash(password)
+
+    @staticmethod
+    def verify(plain_password: str, hashed_password: str) -> bool:
+        """Verify a plain password against a stored hash."""
+        return Hash._password_hash.verify(plain_password, hashed_password)
     

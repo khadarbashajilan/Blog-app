@@ -50,3 +50,12 @@ class Login(BaseModel):
     mail:str
     password:str
     # name:str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None
+

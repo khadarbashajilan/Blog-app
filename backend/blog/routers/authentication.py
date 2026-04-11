@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
-from typing import Dict
+from datetime import datetime, timedelta
 
 # Importing internal modules
-from .. import schemas, database, models, hashing
+from .. import schemas, database, models, hashing, token
 
 # Initialize the router with a tag for automated documentation grouping
 router = APIRouter(tags=['Authentication'])
 
-@router.post("/login", response_model=Dict[str, str])
+@router.post("/login", response_model=schemas.Token)
 def login(request: schemas.Login, db: Session = Depends(database.get_db)):
     """
     Verifies user credentials and returns a success message or error.
@@ -35,9 +35,15 @@ def login(request: schemas.Login, db: Session = Depends(database.get_db)):
 
     # 4. Verify the provided password against the stored hash
     # user.password is now recognized as a string thanks to Mapped[str]
-    if not hashing.Hash.verify(user.password, request.password):
+    if not hashing.Hash.verify(request.password, user.password):
         raise invalid_credentials_exception
-
+    
+    access_token_expires = timedelta(minutes=token.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = token.create_access_token(
+        data={"sub": user.mail}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+    
     # 5. Finalize login
     # In a production environment, you would generate and return a JWT here.
-    return {"message": "Login successful", "status": "authorized"}
+    # return {"message": "Login successful", "status": "authorized"}
