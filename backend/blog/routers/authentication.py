@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 # Importing internal modules
 from .. import schemas, database, models, hashing, token
@@ -43,7 +43,3 @@ def login(request: schemas.Login, db: Session = Depends(database.get_db)):
         data={"sub": user.mail}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
-    
-    # 5. Finalize login
-    # In a production environment, you would generate and return a JWT here.
-    # return {"message": "Login successful", "status": "authorized"}

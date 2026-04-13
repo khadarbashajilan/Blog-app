@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import jwt
+from jwt.exceptions import InvalidTokenError
+from . import schemas
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -19,3 +21,15 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+def verify_token(tkn:str, credentials_exception):
+    try:
+        payload = jwt.decode(tkn, SECRET_KEY, algorithms=[ALGORITHM])
+        email = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = schemas.TokenData(email=email)
+    except InvalidTokenError:
+        raise credentials_exception
+    
+    
