@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
@@ -9,7 +10,7 @@ from .. import schemas, database, models, hashing, token
 router = APIRouter(tags=['Authentication'])
 
 @router.post("/login", response_model=schemas.Token)
-def login(request: schemas.Login, db: Session = Depends(database.get_db)):
+def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
     """
     Verifies user credentials and returns a success message or error.
     
@@ -19,7 +20,7 @@ def login(request: schemas.Login, db: Session = Depends(database.get_db)):
 
     # 1. Attempt to retrieve the user by email
     # We use .first() because 'mail' should be unique in the database
-    user = db.query(models.User).filter(models.User.mail == request.mail).first()
+    user = db.query(models.User).filter(models.User.mail == request.username).first()
 
     # 2. Security: Define a generic exception to prevent "User Enumeration" attacks.
     # This ensures an attacker doesn't know if the email exists or not.

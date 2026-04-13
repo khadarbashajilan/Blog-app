@@ -18,7 +18,7 @@ def create(req: schemas.BlogBase, db: Session = Depends(get_db)):
         The created blog post
     """
     # Create a new Blog model instance with data from the request
-    new_blog = models.Blog(title=req.title, body=req.body, user_id = 1)
+    new_blog = models.Blog(title=req.title, body=req.body, user_id = 2)
 
     try:
         # Add the new blog to the database session
