@@ -8,10 +8,11 @@ from .routers import user
 
 # Create a FastAPI application instance
 app = FastAPI()
-# get_db = database.get_db
+
 # Create all database tables based on model definitions if they don't already exist
 models.Base.metadata.create_all(engine)
 
+# Include routers
 app.include_router(authentication.router)
 
 app.include_router(blog.router)

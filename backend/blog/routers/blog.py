@@ -12,8 +12,8 @@ router = APIRouter(prefix='/blog', tags=['blog'])
 # Create
 # Define a POST endpoint to create a new blog post
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ShowBlog)
-def create(req: schemas.BlogBase, db: Session = Depends(get_db), current_user:schemas.UserCreate = Depends(get_current_user)):
-    return blog.create(req,db)
+def create(req: schemas.BlogBase, db: Session = Depends(get_db), current_user:schemas.User = Depends(get_current_user)):
+    return blog.create(req, current_user.mail, db)
 
 # GET
 @router.get('/', response_model=List[schemas.ShowBlog])
@@ -29,9 +29,10 @@ def get_blog(id: int, db: Session = Depends(get_db), current_user:schemas.UserCr
 # Delete  
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_blog(id:int, db:Session = Depends(get_db), current_user:schemas.UserCreate = Depends(get_current_user)):
-    return blog.delete_blog(id, db)
+    return blog.delete_blog(id,current_user.mail, db)
 
 # Update
-@router.put('/{id}', response_model=schemas.Blog)
+@router.put('/{id}')
 def update(id: int, req: schemas.UpdatedBlog, db: Session = Depends(get_db), current_user:schemas.UserCreate = Depends(get_current_user)): # id from URL, req from JSON
-    return blog.update(id,req,db)
+    print(current_user)
+    return blog.update(id,req,current_user.mail,db)

@@ -25,10 +25,11 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 def verify_token(tkn:str, credentials_exception):
     try:
         payload = jwt.decode(tkn, SECRET_KEY, algorithms=[ALGORITHM])
-        email = payload.get("sub")
-        if email is None:
+        mail = payload.get("sub")
+        if mail is None:
             raise credentials_exception
-        token_data = schemas.TokenData(email=email)
+        token_data = schemas.TokenData(mail=mail)
+        return token_data
     except InvalidTokenError:
         raise credentials_exception
     

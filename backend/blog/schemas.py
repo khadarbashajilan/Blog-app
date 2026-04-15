@@ -14,6 +14,10 @@ class UserBase(BaseModel):
     name: str
     mail: str
 
+class User(BaseModel):
+    name:str
+    mail:str
+    password:str
 
 # --- REQUEST MODELS (inputs) ---
 
@@ -57,5 +61,5 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    email: str | None = None
+    mail: str | None = None
 

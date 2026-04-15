@@ -1,7 +1,15 @@
+# Import String, Integer, and ForeignKey from SQLAlchemy to define column data types
 from sqlalchemy import String, Integer, ForeignKey
+
+# Import Mapped, mapped_column, and relationship from SQLAlchemy ORM to define ORM mappings
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+# Import List from typing to define the type of the blogs attribute in the User class
 from typing import List
+
+# Import Base from the database module to use as the declarative base class for the models
 from .database import Base
+
 
 class Blog(Base):
     """
