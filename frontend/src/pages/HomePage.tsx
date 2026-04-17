@@ -15,7 +15,7 @@ const HomePage: React.FC = () => {
           </p>
           <div className="flex justify-center space-x-4">
             <Link
-              to="/blogs"
+              to="/login"
               className="bg-gray-800 text-white py-2 px-6 rounded hover:bg-gray-700 transition duration-300"
             >
               Explore Posts

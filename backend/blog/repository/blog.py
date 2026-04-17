@@ -103,6 +103,7 @@ def delete_blog(id:int, current_user_mail:str, db:Session = Depends(get_db)):
 
     Args:
         id: ID of the blog post to delete
+        current_user_mail: Email of the current user
         db: Database session
 
     Returns:

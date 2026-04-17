@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 const NavBar = () => {
   // Assuming you have a way to check if the user is logged in, for example:
-  const isLoggedIn = true; // Replace this with your actual logic to check if the user is logged in
+  const isLoggedIn = false; // Replace this with your actual logic to check if the user is logged in
   const userName = "John Doe"; // Replace this with the actual user's name
 
   return (
